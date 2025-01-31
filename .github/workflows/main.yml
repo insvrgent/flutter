@@ -17,32 +17,25 @@ jobs:
     runs-on: macos-latest
 
     steps:
-      # Checkout the repository
-      - uses: actions/checkout@v2  # Updated to the latest version
+      - uses: actions/checkout@v1
       
-      # Set up Java
-      - uses: actions/setup-java@v2  # Updated to the latest version
+      - uses: actions/setup-java@v1
         with:
-          java-version: '12'  # You can specify '12' instead of '12.x' for clarity
+          java-version: '12.x'
           
-      # Set up Flutter
-      - uses: subosito/flutter-action@v2  # Updated to the latest version
+      - uses: subosito/flutter-action@v1
         with:
-          flutter-version: '2.2.0'  # Ensure this version is compatible with your project
+          flutter-version: '2.2.0'
           
-      # Get Flutter dependencies
       - run: flutter pub get
       
-      # Run tests
       - run: flutter test
       
-      # Build the APK
       - run: flutter build apk --debug --split-per-abi
       
-      # Push the APK to GitHub Releases
       - name: Push to Releases
         uses: ncipollo/release-action@v1
         with:
           artifacts: "build/app/outputs/apk/debug/*"
-          tag: v1.0.${{ github.run_number }}  # Tag format for the release
-          token: ${{ secrets.TOKEN }}  # Ensure this secret is set in your repository
+          tag: v1.0.${{ github.run_number }}
+          token: ${{ secrets.TOKEN }}
