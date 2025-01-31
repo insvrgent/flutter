@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -16,26 +14,10 @@ class _HomeState extends State<Home> {
   int pageIndex = 0;
   late PageController pageController;
 
-  final gsi = GoogleSignIn();
-
-  handleSignIn(GoogleSignInAccount? account) {
-    if (account != null) {
-      print('Account: ${account.toString()}');
-      setState(() {
-        auth = true;
-      });
-    } else {
-      setState(() {
-        auth = false;
-      });
-    }
-  }
-
   @override
   void initState() {
     super.initState();
     pageController = PageController(initialPage: this.pageIndex);
-    gsi.onCurrentUser Changed.listen((account) => handleSignIn(account));
   }
 
   Widget buildUnauthScreen() {
@@ -71,7 +53,7 @@ class _HomeState extends State<Home> {
                   print('Response data: $responseData');
                   // You can now use the responseData to update your UI or state.
                   setState(() {
-                    auth = true; // Assuming you want to set auth to true after successful API call
+                    auth = true; // Set auth to true after successful API call
                   });
                 } else {
                   // If the server did not return a 200 OK response, throw an exception.
@@ -92,7 +74,7 @@ class _HomeState extends State<Home> {
     );
   }
 
-  buildAuthScreen() {
+  Widget buildAuthScreen() {
     return Scaffold(
       appBar: AppBar(
         title: Text('Flutter Gram'),
