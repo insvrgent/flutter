@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -32,9 +34,8 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    gsi.signInSilently().then((account) => handleSignIn(account));
     pageController = PageController(initialPage: this.pageIndex);
-    gsi.onCurrentUserChanged.listen((account) => handleSignIn(account));
+    gsi.onCurrentUser Changed.listen((account) => handleSignIn(account));
   }
 
   Widget buildUnauthScreen() {
@@ -60,13 +61,29 @@ class _HomeState extends State<Home> {
               ),
             ),
             GestureDetector(
-              onTap: () {
-                gsi.signIn();
+              onTap: () async {
+                final url = Uri.parse('https://dev.api.kedaimaster.com/item/get-cafe-items/galauers');
+                final response = await http.get(url);
+
+                if (response.statusCode == 200) {
+                  // If the server returns a 200 OK response, parse the JSON.
+                  final responseData = json.decode(response.body);
+                  print('Response data: $responseData');
+                  // You can now use the responseData to update your UI or state.
+                  setState(() {
+                    auth = true; // Assuming you want to set auth to true after successful API call
+                  });
+                } else {
+                  // If the server did not return a 200 OK response, throw an exception.
+                  print('Failed to load data');
+                }
               },
               child: Container(
                 width: MediaQuery.of(context).size.width * .9,
                 height: 60,
-                decoration: BoxDecoration(image: DecorationImage(image: AssetImage('assets/images/google-login.png'))),
+                decoration: BoxDecoration(
+                  image: DecorationImage(image: AssetImage('assets/images/google-login.png')),
+                ),
               ),
             )
           ],
